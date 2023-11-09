@@ -3,6 +3,7 @@ package edu.temple.myapplication
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
+import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 
@@ -15,7 +16,13 @@ class TimerService : Service() {
 
     private var paused = false
 
+    lateinit var timerHandler: Handler
+
     inner class TimerBinder : Binder() {
+
+        fun setHandler(handler: Handler){
+            timerHandler = handler
+        }
 
         // Check if Timer is already running
         var isRunning: Boolean
@@ -78,6 +85,10 @@ class TimerService : Service() {
             try {
                 for (i in startValue downTo 1)  {
                     Log.d("Countdown", i.toString())
+
+                    if(::timerHandler.isInitialized) {
+                        timerHandler.sendEmptyMessage(i)
+                    }
 
                         while (paused);
                         sleep(1000)
